@@ -49,17 +49,28 @@
                 <small>Você pode fazer upload de vários arquivos para servir como base ou referência.</small>
             </div>
 
-            <div class="log-wrapper">
-                <h2>Status em tempo real</h2>
-                <div id="progressLog" class="log-panel" aria-live="polite" aria-atomic="false">
-                    <p class="log-placeholder">Os eventos do processo aparecerão aqui.</p>
-                </div>
+            <div class="form-group">
+                <label for="outputPath">Salvar PDF em (opcional):</label>
+                <input type="text" id="outputPath" name="output_path" placeholder="Ex.: C:\ebooks\meu_ebook.pdf">
+                <small>Deixe em branco para usar o padrão do sistema.</small>
             </div>
 
-            <div id="downloadSection" class="download-section" style="display: none;">
-                <p>Seu ebook foi gerado com sucesso!</p>
-                <a id="downloadLink" href="#" download class="btn-download">Baixar Ebook</a>
+            <button type="submit" class="btn-generate">Gerar Ebook</button>
+        </form>
+
+        <div id="status" class="status"></div>
+
+        <div class="log-wrapper">
+            <h2>Status em tempo real</h2>
+            <div id="progressLog" class="log-panel" aria-live="polite" aria-atomic="false">
+                <p class="log-placeholder">Os eventos do processo aparecerão aqui.</p>
             </div>
+        </div>
+
+        <div id="downloadSection" class="download-section" style="display: none;">
+            <p>Seu ebook foi gerado com sucesso!</p>
+            <a id="downloadLink" href="#" download class="btn-download">Baixar Ebook</a>
+        </div>
     </div>
 
     <script src="/static/script.js"></script>

@@ -1,4 +1,3 @@
-const backendInput = document.getElementById('backendUrl');
 const logPanel = document.getElementById('progressLog');
 const heartbeatMessages = [
     'Processando com a IA... Pode levar alguns minutos.',
@@ -7,13 +6,6 @@ const heartbeatMessages = [
     'Ainda em andamento: aguardando resposta do backend.'
 ];
 let heartbeatTimer = null;
-
-function ensureBackendDefault() {
-    if (backendInput && !backendInput.value) {
-        const preset = window.BACKEND_URL || window.backendUrl || 'http://localhost:5001';
-        backendInput.value = preset;
-    }
-}
 
 function appendLog(message) {
     if (!logPanel) return;
@@ -51,8 +43,6 @@ function stopHeartbeat() {
         heartbeatTimer = null;
     }
 }
-
-ensureBackendDefault();
 
 document.getElementById('ebookForm').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -92,12 +82,14 @@ document.getElementById('ebookForm').addEventListener('submit', async function (
     const currentOrigin = (window.location && window.location.origin && window.location.origin !== 'null' && !window.location.origin.startsWith('file://'))
         ? window.location.origin
         : '';
+
+    // Prioridade: Meta tag > Origem atual > Localhost
     const candidates = [
-        backendInput ? backendInput.value.trim() : '',
         typeof window !== 'undefined' ? (window.BACKEND_URL || window.backendUrl || '') : '',
         metaBackendUrl ? metaBackendUrl.content.trim() : '',
         currentOrigin
     ].filter(Boolean);
+
     const backendBaseUrl = (candidates[0] || 'http://localhost:5001').replace(/\/+$/, '');
     const endpoint = `${backendBaseUrl}/generate_ebook`;
     appendLog(`Enviando requisição para ${endpoint}.`);

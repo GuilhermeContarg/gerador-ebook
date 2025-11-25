@@ -13,8 +13,8 @@ from fastapi.responses import JSONResponse, StreamingResponse
 import google.generativeai as genai
 import markdown
 from openai import OpenAI
-from pypdf import PdfReader
-from weasyprint import HTML, CSS
+# from pypdf import PdfReader  <-- Moved to local scope
+# from weasyprint import HTML, CSS <-- Moved to local scope
 from dotenv import load_dotenv, find_dotenv
 import uvicorn
 
@@ -101,6 +101,7 @@ async def _extract_text_from_uploads(files: Iterable[UploadFile]) -> List[str]:
         if not file_bytes:
             continue
         if filename.endswith(".pdf"):
+            from pypdf import PdfReader
             pdf_bytes = io.BytesIO(file_bytes)
             reader = PdfReader(pdf_bytes)
             for page in reader.pages:
@@ -585,6 +586,7 @@ Sua tarefa é revisar o rascunho a seguir para garantir a máxima qualidade e fi
     # 3.3. Gera o PDF
     try:
         _log_step(f"Iniciando conversao para PDF em {output_pdf}.")
+        from weasyprint import HTML, CSS
         html = HTML(string=html_content, base_url=BASE_DIR)
         css = CSS(string=css_content)
         pdf_bytes = html.write_pdf(stylesheets=[css])

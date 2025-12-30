@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador de eBook</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f6efe7;
+            --bg-strong: #efe3d5;
+            --ink: #1f2328;
+            --muted: #5c6470;
+            --accent: #e4572e;
+            --accent-2: #1f7a8c;
+            --accent-3: #f2b66d;
+            --panel: rgba(255, 255, 255, 0.88);
+            --stroke: rgba(31, 35, 40, 0.12);
+            --shadow: 0 20px 50px rgba(27, 42, 53, 0.16);
+            --radius: 22px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Sora", "Segoe UI", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 15% -10%, #ffe9cc 0%, transparent 55%),
+                radial-gradient(circle at 85% 0%, #cdeee6 0%, transparent 45%),
+                linear-gradient(150deg, #fbf5ed 0%, #f1e6d6 100%);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(rgba(31, 35, 40, 0.06) 1px, transparent 1px);
+            background-size: 22px 22px;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .shell {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 36px 22px 64px;
+            display: grid;
+            gap: 26px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.75));
+            border: 1px solid var(--stroke);
+            border-radius: calc(var(--radius) + 6px);
+            padding: 30px 34px;
+            box-shadow: var(--shadow);
+            display: grid;
+            gap: 18px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: var(--accent-2);
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+        }
+
+        .hero-title h1 {
+            font-family: "Fraunces", serif;
+            font-size: clamp(2.2rem, 2.6vw, 3.1rem);
+            margin: 0 0 8px;
+            color: #16252c;
+        }
+
+        .hero-title p {
+            margin: 0;
+            max-width: 720px;
+            color: var(--muted);
+            font-size: 1.05rem;
+        }
+
+        .hero-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .metric {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--stroke);
+            border-radius: 16px;
+            padding: 12px 16px;
+            min-width: 160px;
+        }
+
+        .metric span {
+            display: block;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+
+        .metric strong {
+            font-size: 0.95rem;
+            color: var(--ink);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--stroke);
+            border-radius: var(--radius);
+            padding: 26px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(6px);
+        }
+
+        .panel-header {
+            margin-bottom: 18px;
+        }
+
+        .panel-header h2 {
+            font-family: "Fraunces", serif;
+            margin: 0 0 6px;
+            font-size: 1.6rem;
+            color: #18262f;
+        }
+
+        .panel-header p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        form {
+            display: grid;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        label,
+        .field-title {
+            font-weight: 600;
+            color: #22323c;
+        }
+
+        textarea,
+        input[type="text"],
+        input[type="password"],
+        select {
+            font-family: inherit;
+            font-size: 1rem;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--stroke);
+            background: #fff;
+            color: var(--ink);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        select {
+            appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, #63717a 50%),
+                linear-gradient(135deg, #63717a 50%, transparent 50%);
+            background-position: calc(100% - 18px) 52%, calc(100% - 12px) 52%;
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        textarea:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: rgba(31, 122, 140, 0.6);
+            box-shadow: 0 0 0 3px rgba(31, 122, 140, 0.15);
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px;
+        }
+
+        .option-card {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .option-card input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .option-card span {
+            display: block;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--stroke);
+            background: #fff;
+            font-weight: 600;
+            text-align: center;
+            color: var(--muted);
+            transition: all 0.2s ease;
+        }
+
+        .option-card input:checked + span {
+            color: #fff;
+            border-color: transparent;
+            background: linear-gradient(135deg, rgba(31, 122, 140, 0.95), rgba(27, 111, 125, 0.85));
+            box-shadow: 0 12px 24px rgba(31, 122, 140, 0.28);
+        }
+
+        .api-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+            gap: 12px;
+        }
+
+        .helper-text {
+            margin: 4px 0 0;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        button {
+            font-family: "Sora", sans-serif;
+            font-weight: 600;
+            border: none;
+            border-radius: 999px;
+            padding: 12px 22px;
+            background: linear-gradient(135deg, var(--accent), #f08a4b);
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 12px 25px rgba(228, 87, 46, 0.28);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 30px rgba(228, 87, 46, 0.34);
+        }
+
+        button.secondary {
+            background: transparent;
+            color: var(--accent-2);
+            border: 1px solid var(--accent-2);
+            box-shadow: none;
+        }
+
+        button.secondary:hover {
+            box-shadow: 0 12px 25px rgba(31, 122, 140, 0.18);
+        }
+
+        #status {
+            margin-top: 18px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px dashed transparent;
+        }
+
+        #status:empty {
+            display: none;
+        }
+
+        #status.loading {
+            color: var(--accent-2);
+            background: rgba(31, 122, 140, 0.12);
+            border-color: rgba(31, 122, 140, 0.3);
+        }
+
+        #status.error {
+            color: #a12919;
+            background: rgba(228, 87, 46, 0.12);
+            border-color: rgba(228, 87, 46, 0.35);
+        }
+
+        .tips {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 16px;
+            background: rgba(31, 122, 140, 0.08);
+            border: 1px solid rgba(31, 122, 140, 0.2);
+        }
+
+        .tips h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+            color: #1b4c5b;
+        }
+
+        .tips ul {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--muted);
+            display: grid;
+            gap: 6px;
+        }
+
+        #resultado {
+            margin-top: 6px;
+            border: 1px solid var(--stroke);
+            border-radius: 18px;
+            background: #fff;
+            padding: 20px;
+            min-height: 220px;
+            max-height: 520px;
+            overflow: auto;
+            font-size: 1.08rem;
+            line-height: 1.8;
+        }
+
+        .preview-empty {
+            text-align: center;
+            color: var(--muted);
+            padding: 40px 20px;
+        }
+
+        .preview-empty span {
+            display: block;
+            font-weight: 600;
+            color: #22323c;
+            margin-bottom: 6px;
+        }
+
+        #resultado h1 {
+            text-align: left;
+            color: #1b4c5b;
+            font-family: "Fraunces", serif;
+            font-size: 2.2rem;
+        }
+
+        #resultado h2 {
+            color: #215968;
+            border-bottom: 2px solid rgba(31, 122, 140, 0.22);
+            padding-bottom: 6px;
+            font-size: 1.7rem;
+        }
+
+        #resultado h3 {
+            font-size: 1.35rem;
+            color: #2c4955;
+        }
+
+        #resultado h1,
+        #resultado h2,
+        #resultado h3 {
+            page-break-after: avoid;
+            page-break-inside: avoid;
+            break-after: avoid-page;
+        }
+
+        #resultado p {
+            margin-bottom: 14px;
+            font-size: 1.05em;
+        }
+
+        #resultado .cover-title {
+            text-align: center;
+            font-size: 2.6rem;
+            letter-spacing: 0.05em;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #resultado .back-cover-title {
+            text-align: center;
+            font-size: 2.1rem;
+            margin-top: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #resultado .indice,
+        #resultado nav {
+            font-size: 1.25rem;
+            line-height: 1.65;
+            margin-bottom: 1.5rem;
+        }
+
+        #resultado .indice li,
+        #resultado nav li {
+            margin-bottom: 0.45rem;
+        }
+
+        #resultado strong {
+            color: #20323a;
+        }
+
+        #resultado ul {
+            padding-left: 20px;
+        }
+
+        .acoes-ebook {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .logs {
+            margin-top: 20px;
+            padding: 16px;
+            border: 1px solid var(--stroke);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.85);
+            max-height: 220px;
+            overflow-y: auto;
+            font-size: 0.92rem;
+        }
+
+        .logs h3 {
+            margin: 0 0 10px;
+            font-size: 1rem;
+            color: #22323c;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            color: var(--muted);
+        }
+
+        .log-entry.error {
+            color: #b42318;
+        }
+
+        .log-entry.success {
+            color: #1a7f37;
+        }
+
+        .log-entry.info {
+            color: #1f7a8c;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(14px);
+            animation: rise 0.8s ease forwards;
+            animation-delay: var(--delay, 0s);
+        }
+
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                animation: none;
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        @media (max-width: 980px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .hero {
+                padding: 24px;
+            }
+
+            .hero-metrics {
+                flex-direction: column;
+            }
+
+            .panel {
+                padding: 22px;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .api-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <header class="hero reveal">
+            <span class="hero-badge">Studio IA</span>
+            <div class="hero-title">
+                <h1>Gerador de eBook com IA</h1>
+                <p>Descreva o perfil do escritor e os temas. Em segundos, receba um eBook estruturado, pronto para revisão e exportação.</p>
+            </div>
+            <div class="hero-metrics">
+                <div class="metric">
+                    <span>Formato</span>
+                    <strong>A4 pronto para PDF</strong>
+                </div>
+                <div class="metric">
+                    <span>Entrega</span>
+                    <strong>HTML limpo e editável</strong>
+                </div>
+                <div class="metric">
+                    <span>Fluxo</span>
+                    <strong>Prévia + download direto</strong>
+                </div>
+            </div>
+        </header>
+
+        <section class="layout">
+            <div class="panel form-panel reveal" style="--delay: 0.08s;">
+                <div class="panel-header">
+                    <h2>Briefing criativo</h2>
+                    <p>Quanto mais específico o perfil e os temas, melhor o resultado final.</p>
+                </div>
+
+                <form id="ebookForm">
+                    <div class="form-group">
+                        <label for="perfil">Perfil do escritor</label>
+                        <textarea id="perfil" name="perfil" placeholder="Ex: tom de voz, especialidade, público-alvo, estilo narrativo..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="autor">Nome do autor</label>
+                        <input type="text" id="autor" name="autor" placeholder="Ex: Ana Souza" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Forma de escrita</label>
+                        <div class="option-grid" role="radiogroup" aria-label="Forma de escrita">
+                            <label class="option-card">
+                                <input type="radio" name="estilo" value="storytelling" checked />
+                                <span>Storytelling</span>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="estilo" value="quiasmo" />
+                                <span>Quiasmo</span>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="estilo" value="copywriting" />
+                                <span>Copywriting</span>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="estilo" value="tecnico" />
+                                <span>Técnico</span>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="estilo" value="inspirador" />
+                                <span>Inspirador</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="temas">Temas do eBook</label>
+                        <textarea id="temas" name="temas" placeholder="Ex: tópicos principais, estrutura de capítulos, exemplos e referências..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="field-title">Credenciais da API</div>
+                        <div class="api-row">
+                            <div class="form-group">
+                                <label for="apiProvider">Provedor</label>
+                                <select id="apiProvider" name="apiProvider">
+                                    <option value="gemini">Gemini (Google)</option>
+                                    <option value="openai">OpenAI</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="apiKey">API key</label>
+                                <input type="password" id="apiKey" name="apiKey" placeholder="Cole sua chave aqui" autocomplete="off" spellcheck="false" required />
+                                <p id="apiKeyHint" class="helper-text">Use a chave do Google AI Studio.</p>
+                            </div>
+                        </div>
+                        <div class="form-group" id="openaiModelGroup" hidden>
+                            <label for="openaiModel">Modelo OpenAI</label>
+                            <select id="openaiModel" name="openaiModel">
+                                <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                                <option value="gpt-4o-mini">gpt-4o-mini</option>
+                                <option value="gpt-4o">gpt-4o</option>
+                            </select>
+                            <p class="helper-text">Usado somente quando o provedor selecionado e OpenAI.</p>
+                        </div>
+                    </div>
+
+                    <button type="submit">Gerar eBook</button>
+                </form>
+
+                <div id="status"></div>
+
+                <div class="tips">
+                    <h3>Dicas rápidas</h3>
+                    <ul>
+                        <li>Inclua o público-alvo e o nível de conhecimento desejado.</li>
+                        <li>Peça um tom específico: inspirador, técnico, didático.</li>
+                        <li>Liste capítulos ou referências que não podem faltar.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel output-panel reveal" style="--delay: 0.16s;">
+                <div class="panel-header">
+                    <h2>Pré-visualização</h2>
+                    <p>Revise o conteúdo gerado antes de abrir ou baixar o eBook.</p>
+                </div>
+
+                <div id="resultado">
+                    <div class="preview-empty">
+                        <span>Seu eBook aparece aqui</span>
+                        <p>Preencha o briefing e clique em "Gerar eBook" para ver o resultado.</p>
+                    </div>
+                </div>
+
+                <div id="acoesEbook" class="acoes-ebook" hidden>
+                    <button type="button" id="abrirNovaAba">Abrir em nova aba</button>
+                    <button type="button" id="baixarEbook" class="secondary">Baixar eBook (HTML)</button>
+                </div>
+
+                <div id="logs" class="logs">
+                    <h3>Logs da geração</h3>
+                    <div id="logEntries">
+                        <div class="log-entry">Aguardando geração...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="ebook.js"></script>
+</body>
+</html>

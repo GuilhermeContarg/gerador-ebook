@@ -17,7 +17,7 @@ load_dotenv()
 app = Flask(__name__, static_folder=".", static_url_path="")
 CORS(app)
 
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3-pro-preview")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 
@@ -81,51 +81,241 @@ def build_prompt(perfil_escritor, temas_ebook, estilo_escrita, autor):
     autor_final = autor or "nao informado"
     return f"""
 
-### Objetivo principal
-Gerar o conteudo completo e o codigo HTML (apenas *body*) para um eBook sobre o tema solicitado,
-pronto para conversao em PDF no formato A4.
+Diretrizes Completas para Geração de eBook em HTML (Formato A4)
+🎯 OBJETIVO PRINCIPAL
 
-### Contexto e papel
-Atue como escritor especialista e web designer senior. A escrita deve ser envolvente, clara e estruturada.
-Use o perfil do escritor abaixo para ajustar publico e tom.
-Forma de escrita preferida: {estilo_final}.
+Gerar o conteúdo integral de um eBook profissional e o respectivo código HTML (apenas o corpo – <body>), totalmente pronto para conversão em PDF no formato A4, com estrutura editorial, narrativa e visual equivalente a um livro digital comercial.
 
-### Instrucoes especificas
-- Titulo principal em <h1>, atraente e claro.
-- CAPA:
-  - Deve conter o titulo do eBook.
-  - Deve ter uma imagem de fundo relacionada ao tema do eBook.
-  - O titulo deve estar centralizado na capa, com fonte grande e legivel.
-  - O nome do autor deve estar na parte inferior de uma pagina posterior a capa.
-- Deve haver pagina do titulo e, na pagina seguinte, a folha de rosto com as informacoes do autor.
-- INDICE:
-  - Deve listar todos os capitulos sem numeros de pagina.
-  - Deve ser gerado com base na estrutura dos capitulos.
-  - Deve estar em uma nova pagina apos a folha de rosto.
-  - Use um layout diferente do restante do eBook, mas ainda profissional.
-- Introducao:
-  - Envolvente, usando storytelling ou apresentando o problema que o eBook resolve.
-  - Apresente o objetivo do eBook e um resumo do que sera abordado.
-- Estrutura de capitulos:
-  - Desenvolva de 5 a 15 capitulos principais (<h2>).
-  - Cada capitulo pode ter subtitulos (<h3>) e paragrafos detalhados.
-  - Use listas quando apropriado, exemplos praticos, estudos de caso ou analogias. 
-  - seja detalhista e claro, sem perder o foco. trabalhe bem as ideias e as informaÇõÇæes.
-  - Crie referencias e citaÇõÇæes para respaudar 
-  - pesquise escritores que falaram ou sÇœo referencias no assunto do eBook.para criar as citaÇõÇæes. e trabalhar as ideias
-  - pesquise livros, artigos, videos, podcasts, etc. para criar as citaÇõÇæes. e trabalhar as ideias
-- Conclusao (<h2>):
-  - Resuma os pontos principais.
-  - Reforce a mensagem central e inclua CTA opcional.
+O resultado deve ser um eBook completo, didático, envolvente e bem diagramado.
 
-### Restricoes e formato de saida
-- Gere apenas o HTML do corpo (sem <html>, <head> ou <body>).
-- Nao inclua introducoes do tipo "Claro, aqui esta o codigo".
-- Use HTML semantico (<h1>, <h2>, <h3>, <p>, <strong>, <ul>, <li>).
-- Paginacao para PDF:
-  - O titulo (<h1>) e a introducao devem ficar na primeira pagina.
-  - Cada novo capitulo (<h2>) e a conclusao devem iniciar em nova pagina.
-  - Insira <div style="page-break-after: always;"></div> imediatamente antes de cada <h2>.
+🧠 CONTEXTO E PAPEL DO ESCRITOR
+
+Atue como um escritor especialista no tema abordado, com domínio técnico e capacidade pedagógica.
+
+A escrita deve ser:
+
+Clara
+
+Fluida
+
+Bem estruturada
+
+Profunda, porém acessível
+
+Envolvente, sem ser prolixa
+
+Use o perfil do escritor informado para ajustar:
+
+Linguagem
+
+Nível técnico
+
+Público-alvo
+
+Tom emocional ou institucional
+
+Forma de escrita preferida: {estilo_final}
+
+O texto deve transmitir autoridade, empatia e clareza.
+
+🖼️ ESTRUTURA INICIAL DO EBOOK
+📕 CAPA (Primeira Página)
+
+A capa deve conter:
+
+Título do eBook (centralizado, fonte grande e impactante)
+
+Imagem de fundo relacionada diretamente ao tema do eBook
+
+Visual limpo e profissional
+
+A capa deve ocupar sozinha a primeira página.
+
+📄 PÁGINA DE TÍTULO (Segunda Página)
+
+Deve conter:
+
+Título do eBook em destaque
+
+Subtítulo (se apropriado)
+
+Pequena descrição do propósito do livro
+
+📄 FOLHA DE ROSTO (Terceira Página)
+
+Deve conter:
+
+Nome do autor
+
+Perfil resumido do autor (2–4 linhas)
+
+Ano de publicação
+
+Direitos autorais ou nota editorial simples
+
+📑 ÍNDICE
+
+Deve estar em nova página após a folha de rosto
+
+Deve listar todos os capítulos
+
+Não utilizar numeração de páginas
+
+Deve refletir exatamente a estrutura real dos capítulos
+
+Use layout diferenciado do restante do livro (mais limpo e organizado)
+
+Pode utilizar listas ou blocos estilizados
+
+✨ INTRODUÇÃO
+
+A introdução deve:
+
+Criar conexão emocional ou intelectual com o leitor
+
+Apresentar claramente o problema que o eBook resolve
+
+Explicar por que esse tema é importante
+
+Mostrar o que o leitor vai aprender
+
+Definir expectativas
+
+Pode usar:
+
+Storytelling
+
+Situações reais
+
+Perguntas provocativas
+
+O título principal <h1> e a introdução devem permanecer juntos na primeira página.
+
+📚 ESTRUTURA DOS CAPÍTULOS
+Quantidade
+
+Desenvolva entre 5 e 15 capítulos principais, cada um iniciado por <h2>.
+
+Organização interna
+
+Cada capítulo pode conter:
+
+Subtítulos <h3>
+
+Parágrafos explicativos
+
+Listas
+
+Exemplos práticos
+
+Analogias
+
+Mini estudos de caso
+
+Reflexões
+
+Profundidade
+
+Para cada capítulo:
+
+Desenvolva bem as ideias
+
+Evite superficialidade
+
+Construa raciocínio progressivo
+
+Use linguagem clara
+
+Seja didático
+
+Conteúdo enriquecido
+
+Obrigatório:
+
+Criar referências conceituais
+
+Inserir citações (parafraseadas ou diretas) de:
+
+Autores reconhecidos
+
+Livros relevantes
+
+Artigos
+
+Podcasts
+
+Pesquisas
+
+Vídeos
+
+As citações devem ser integradas ao texto, explicando o contexto e conectando com o argumento apresentado.
+
+🧾 CONCLUSÃO (<h2>)
+
+A conclusão deve:
+
+Recapitular os principais aprendizados
+
+Reforçar a mensagem central do livro
+
+Inspirar ação
+
+Pode conter CTA opcional (ex: aplicar o conteúdo, buscar mais conhecimento, etc.)
+
+📐 REGRAS DE FORMATAÇÃO HTML
+Estrutura permitida
+
+Utilize exclusivamente:
+
+<h1>
+<h2>
+<h3>
+<p>
+<strong>
+<ul>
+<li>
+
+
+Não use:
+
+<html>
+
+<head>
+
+<body>
+
+Quebras de página para PDF A4
+
+Imprescindível:
+
+O <h1> e a introdução devem estar na primeira página
+
+Cada novo capítulo (<h2>) deve começar em página nova
+
+A conclusão também deve iniciar em nova página
+
+Para isso:
+
+Insira obrigatoriamente:
+
+<div style="page-break-after: always;"></div>
+
+
+imediatamente antes de cada <h2>.
+
+🚫 RESTRIÇÕES DE SAÍDA
+
+Gere exclusivamente o HTML do corpo
+
+Não inclua explicações externas
+
+Não escreva frases como “Aqui está o código”
+
+Não inclua comentários técnicos
+
+Não adicione texto fora do eBook
+
+O retorno deve ser apenas o conteúdo final do livro em HTML.
 
 INFORMACOES DO EBOOK:
 1. Perfil do escritor:

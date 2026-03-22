@@ -21,7 +21,7 @@ CORS(app)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-pro")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash-latest")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
 
@@ -36,11 +36,11 @@ def health():
     return jsonify({"status": "ok"})
 
 
-def generate_with_gemini(api_key, prompt):
+def generate_with_gemini(api_key, prompt, model_name="gemini-1.5-flash-latest"):
     if genai is None:
         raise RuntimeError("Biblioteca google-generativeai nao instalada.")
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(GEMINI_MODEL)
+    model = genai.GenerativeModel(model_name)
     response = model.generate_content(prompt)
     return response.text
 
@@ -213,7 +213,8 @@ def gerar_ebook():
             model_name = data.get("anthropic_model") or ANTHROPIC_MODEL
             ebook_html = generate_with_anthropic(api_key, prompt, model_name)
         elif api_provider == "gemini":
-            ebook_html = generate_with_gemini(api_key, prompt)
+            model_name = data.get("gemini_model") or GEMINI_MODEL
+            ebook_html = generate_with_gemini(api_key, prompt, model_name)
         else:
             return jsonify({"error": "Provedor invalido. Use gemini, openai ou anthropic."}), 400
 

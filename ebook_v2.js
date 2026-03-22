@@ -13,6 +13,9 @@
 	const openaiModelGroup = document.getElementById("openaiModelGroup");
 	const openaiModelSelect = document.getElementById("openaiModel");
 
+	const geminiModelGroup = document.getElementById("geminiModelGroup");
+	const geminiModelSelect = document.getElementById("geminiModel");
+
     const anthropicModelGroup = document.getElementById("anthropicModelGroup");
 	const anthropicModelSelect = document.getElementById("anthropicModel");
 
@@ -36,6 +39,8 @@
 		if (openaiModelSelect) openaiModelSelect.disabled = (provider !== "openai");
 
         if (anthropicModelGroup) anthropicModelGroup.hidden = (provider !== "anthropic");
+		if (geminiModelGroup) geminiModelGroup.hidden = (provider !== "gemini");
+		if (geminiModelSelect) geminiModelSelect.disabled = (provider !== "gemini");
 		if (anthropicModelSelect) anthropicModelSelect.disabled = (provider !== "anthropic");
 
 		if (provider === "openai") {
@@ -198,6 +203,7 @@
 		const apiKey = apiKeyInput.value.trim();
 		const openaiModel = openaiModelSelect ? openaiModelSelect.value : "";
         const anthropicModel = anthropicModelSelect ? anthropicModelSelect.value : "";
+		const geminiModel = geminiModelSelect ? geminiModelSelect.value : "";
 
 		if (!perfil || !temas || !autor) {
 			appendLog("Preencha perfil, autor e temas.", "error");
@@ -229,6 +235,7 @@
                     api_key: apiKey, // Pode estar vazia se usar o ENV do Backend
                     openai_model: openaiModel,
                     anthropic_model: anthropicModel
+                    ,gemini_model: geminiModel
                 })
             });
 

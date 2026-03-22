@@ -151,7 +151,7 @@ A IA DEVE GERAR um sumário completo de todos os capítulos usando links interno
 Cada título de capítulo deverá ter um id correspondente (<h2 id="capitulo-X">).
 
 ✨ INTRODUÇÃO E CAPÍTULOS
-Desenvolva entre 5 e 15 capítulos principais.
+PARA FINS DE TESTE RAPIDO (EVITAR TIMEOUT DA REDE DO USUARIO), GERE APENAS UM ÚNICO CAPÍTULO MUITO CURTO (2 parágrafos no máximo) e encerre a geração.
 Use <h2> com o atributo id correspondente ao sumário.
 Crie conteúdo aprofundado, com referências conceituais e citações integradas ao texto.
 

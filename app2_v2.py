@@ -39,7 +39,7 @@ def health():
 def generate_with_gemini(api_key, prompt, model_name="gemini-1.5-flash-latest"):
     if genai is None:
         raise RuntimeError("Biblioteca google-generativeai nao instalada.")
-    genai.configure(api_key=api_key)
+    genai.configure(api_key=api_key.strip().replace("\r", "").replace("\n", ""))
     model = genai.GenerativeModel(model_name)
     response = model.generate_content(prompt)
     return response.text

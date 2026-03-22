@@ -239,7 +239,15 @@
                 })
             });
 
-            const data = await response.json();
+            let data = {};
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await response.json();
+            } else {
+                const textError = await response.text();
+                console.error("Servidor retornou não-JSON:", textError);
+                throw new Error("Erro Crítico no Servidor: Timeout ou Chave de API Inválida (Consulte os logs). O Servidor não retornou JSON.");
+            }
 
             if (!response.ok) {
                 throw new Error(data.error || "Erro no servidor ao gerar eBook.");
